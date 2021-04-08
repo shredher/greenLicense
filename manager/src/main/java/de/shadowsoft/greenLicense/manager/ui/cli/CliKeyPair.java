@@ -27,11 +27,18 @@ public class CliKeyPair {
 @CommandLine.Command(name = "show", description = "Show all key pairs")
 class CliKeyPairShow implements Runnable {
 
+    @CommandLine.Option(names = {"--id"}, description = "Show key with this ID only")
+    private String id;
+    @CommandLine.Option(names = {"-b", "--bytes"}, description = "Show byte output to include in code. Only available if --id is set")
+    private boolean showBytes;
     @CommandLine.Option(names = {"-j", "--json"}, description = "Produce JSON output")
     private boolean useJson;
 
+
     public CliKeyPairShow() {
         useJson = false;
+        showBytes = false;
+        id = "";
     }
 
     @Override
@@ -39,7 +46,13 @@ class CliKeyPairShow implements Runnable {
         CliOutKeyPairCollection res = new CliOutKeyPairCollection();
         try {
             for (FssKeyPair keyPair : KeyPairService.getInstance().getAllKeyPairs()) {
-                res.getKeyPairs().add(new CliOutKeyPair(keyPair));
+                if (id.length() == 0 || id.equals(keyPair.getId())) {
+                    CliOutKeyPair pair = new CliOutKeyPair(keyPair);
+                    if (!showBytes || id.length() == 0) {
+                        pair.setPublicKeyBytes("");
+                    }
+                    res.getKeyPairs().add(pair);
+                }
             }
         } catch (Exception e) {
             res.setSuccess(false);

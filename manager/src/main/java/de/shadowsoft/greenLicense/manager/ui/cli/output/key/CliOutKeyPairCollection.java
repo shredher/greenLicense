@@ -12,13 +12,15 @@ public class CliOutKeyPairCollection extends CliOutBase {
         keyPairs = new ArrayList<>();
     }
 
+
     @Override
     public String formatOutput(final StringBuilder res) {
         for (CliOutKeyPair okp : keyPairs) {
             res.append("\n");
             res.append(okp.getId()).append("\t");
             res.append(okp.getName()).append("\t");
-            res.append(okp.getSize());
+            res.append(okp.getSize()).append("\n");
+            res.append(okp.getPublicKeyBytes());
         }
         return res.toString();
     }
