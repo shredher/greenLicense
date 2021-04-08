@@ -20,3 +20,6 @@
 /idgenerator/build.ps1
 target/
 proguard.pro
+/data
+licenseCreatorSettings.json
+/logs

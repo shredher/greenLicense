@@ -3,6 +3,7 @@ package de.shadowsoft.greenLicense.manager.ui.jfxclient.controller;
 
 import de.shadowsoft.greenLicense.manager.model.keypair.FssKeyPair;
 import de.shadowsoft.greenLicense.manager.model.keypair.KeyPairService;
+import de.shadowsoft.greenLicense.manager.tools.PubKeySerializer;
 import de.shadowsoft.greenLicense.manager.tools.serializer.exception.DataLoadingException;
 import de.shadowsoft.greenLicense.manager.ui.jfxclient.config.ProgramSettingsService;
 import de.shadowsoft.greenLicense.manager.ui.jfxclient.view.tableview.TMKeyPair;
@@ -31,7 +32,6 @@ import java.awt.datatransfer.StringSelection;
 import java.io.IOException;
 import java.net.URL;
 import java.security.GeneralSecurityException;
-import java.security.PublicKey;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -117,29 +117,7 @@ public class KeyManagerController extends LicenseManagerController {
     }
 
     private String compileKeyPublicBytes(final FssKeyPair keyPair) {
-        try {
-            PublicKey pk = keyPair.getKeyPair().getPublic();
-            StringBuilder res = new StringBuilder("private byte pk[] = new byte[] {\n");
-            boolean isFirst = true;
-            int i = 0;
-            for (byte b : pk.getEncoded()) {
-                if (!isFirst) {
-                    res.append(", ");
-                }
-                isFirst = false;
-                if (i >= 15) {
-                    res.append("\n");
-                    i = 0;
-                }
-                res.append(String.format("(byte) 0x%02X", b));
-                i++;
-            }
-            res.append("\n};");
-            return res.toString();
-        } catch (GeneralSecurityException | IOException | DataLoadingException e) {
-            LOGGER.error("Unable to generate public byte code!", e);
-        }
-        return "";
+        return PubKeySerializer.serialize(keyPair);
     }
 
     @FXML
